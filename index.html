@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DnD Player Display</title>
+    <script src="/libs/peerjs.js"></script>
+    <script src="/libs/peerve-client.js"></script>
+  </head>
+  <body>
+    <div id="connect-screen">
+      <div class="connect-card">
+        <h2>Connect to Server</h2>
+        <input id="token-input" type="text" placeholder="Enter server token" />
+        <button id="connect-btn">Connect</button>
+        <div id="error-msg"></div>
+      </div>
+    </div>
+    <div id="root" style="display: none"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

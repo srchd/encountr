@@ -1,36 +1,43 @@
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import type { EncounterState } from "./domain/encounter"
 import { FiveToolsClient } from "./network/fiveToolsClient"
 import { InitiativeBoard } from "./components/InitiativeBoard"
 import { loadPlayersJson } from "./utils/playerService"
 
+import { useAuth } from "./context/AuthContext";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+
 declare const PeerVeClient: any;
 
 export default function App() {
-  const [encounter, setEncounter] = useState<EncounterState>({
-    round: 0,
-    currentTurnId: null,
-    combatants: []
-  })
+  const { user } = useAuth();
 
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const players = await loadPlayersJson();
+  return user ? <Dashboard /> : <Login />;
+  // const [encounter, setEncounter] = useState<EncounterState>({
+  //   round: 0,
+  //   currentTurnId: null,
+  //   combatants: []
+  // })
 
-        const client = new FiveToolsClient(players);
-        client.onStateUpdate(setEncounter);
-      } catch (err) {
-        console.error(err);
-      }
-    };
+  // useEffect(() => {
+  //   const init = async () => {
+  //     try {
+  //       const players = await loadPlayersJson();
 
-    init();
-  }, []);
+  //       const client = new FiveToolsClient(players);
+  //       client.onStateUpdate(setEncounter);
+  //     } catch (err) {
+  //       console.error(err);
+  //     }
+  //   };
 
-  return (
-    <div style={{ background: "#0b0f19", minHeight: "100vh", color: "white" }} className="h-screen w-screen bg-slate-900 text-white overflow-hidden">
-      <InitiativeBoard encounter={encounter} />
-    </div>
-  )
+  //   init();
+  // }, []);
+
+  // return (
+  //   <div style={{ background: "#0b0f19", minHeight: "100vh", color: "white" }} className="h-screen w-screen bg-slate-900 text-white overflow-hidden">
+  //     <InitiativeBoard encounter={encounter} />
+  //   </div>
+  // )
 }

@@ -22,44 +22,54 @@ export default function Login() {
 
 
   return (
-    <div>
-      <h1>Encountr</h1>
+    <div id="dashboard">
+      <div>
+        <h1>Encountr</h1>
+      </div>
 
-      <input
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
+      <div>
+        <h3>E-mail</h3>
+        <input
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </div>
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+      <div>
+        <h3>Password</h3> 
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
-      {error && (
-        <div style={{
-          backgroundColor: "#ffe5e5",
-          color: "#b00020",
-          padding: "8px",
-          marginTop: "8px",
-          borderRadius: "4px"
-        }}>
-          {error}
-        </div>
-      )}
+        {error && (
+          <div style={{
+            backgroundColor: "#ffe5e5",
+            color: "#b00020",
+            padding: "8px",
+            marginTop: "8px",
+            borderRadius: "4px"
+          }}>
+            {error}
+          </div>
+        )}
+      </div>
 
-      <button onClick={handleSumbit}>
-        {isRegistering ? "Register" : "Login"}
-      </button>
+      <div>
+        <button onClick={handleSumbit}>
+          {isRegistering ? "Register" : "Login"}
+        </button>
 
-      <button onClick={() => {
-        setIsRegistering(!isRegistering);
-        setError(null);
-        }}>
-        {isRegistering ? "Switch to Login" : "Switch to Register"}
-      </button>
+        <button onClick={() => {
+          setIsRegistering(!isRegistering);
+          setError(null);
+          }}>
+          {isRegistering ? "Switch to Login" : "Switch to Register"}
+        </button>
+      </div>
 
       {/* <button onClick={() => login(email, password)}>Login</button>
       <button onClick={() => register(email, password)}>Register</button> */}

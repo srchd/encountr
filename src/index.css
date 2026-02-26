@@ -84,7 +84,21 @@ button:focus-visible {
 }
 
 #dashboard div {
-  padding: 20px;
+  padding: 13px;
+}
+
+#account-info {
+  display: flex;
+  flex-direction: row;
+}
+
+#delete-account {
+  color: #000000;
+  margin: auto;
+}
+
+#delete-account button {
+  background-color: #ff0000;
 }
 
 #players {

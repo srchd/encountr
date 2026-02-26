@@ -71,6 +71,10 @@ export default function Login() {
         </button>
       </div>
 
+      <div>
+        <a href="privacy.html" target="_blank">Privacy Policy</a>
+      </div>
+
       {/* <button onClick={() => login(email, password)}>Login</button>
       <button onClick={() => register(email, password)}>Register</button> */}
     </div>

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/encountr/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DnD Player Display</title>
+    <script src="/encountr/libs/peerjs.js"></script>
+    <script src="/encountr/libs/peerve-client.js"></script>
+    <script type="module" crossorigin src="/encountr/assets/index-3xeICGlX.js"></script>
+    <link rel="stylesheet" crossorigin href="/encountr/assets/index-DLJcsRFN.css">
+  </head>
+  <body>
+    <div id="connect-screen" style="display: none">
+      <div class="connect-card">
+        <h2>Connect to Server</h2>
+        <input id="token-input" type="text" placeholder="Enter server token" />
+        <button id="connect-btn">Connect</button>
+        <div id="error-msg"></div>
+      </div>
+    </div>
+    <div id="root" style="display: block"></div>
+  </body>
+</html>

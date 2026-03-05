@@ -7,6 +7,13 @@ import Board from "./pages/Board"
 
 declare const PeerVeClient: any;
 
+// TODO:
+//  - Remove PeerVeClient declaration from here
+//  - Add a How To Use link to Dashboard, navigating to README on GitHub
+//  - Modify README to correspond for the hosted webapp
+//  - Find a way to save apiKey to an env variable before hosting
+//  - Host it on GitHub pages
+
 export default function App() {
   const { user } = useAuth();
 

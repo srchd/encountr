@@ -1,5 +1,7 @@
 # Encountr
 
+TODO Modify README to correspond for the hosted webapp
+
 This tool allows you to have a displayable version for encounters tracked on [5etools DM Screen](https://5e.tools/dmscreen.html).
 
 Using 5etools' DM Screen, you will be able to have the page display information from the encounter, such as:

@@ -28,6 +28,8 @@ export default function Dashboard() {
     navigate("/");
   }
 
+  // TODO: Add a How To Use link to Dashboard, navigating to README on GitHub
+
   return (
     <div id="dashboard" style={{
       display: "flex",

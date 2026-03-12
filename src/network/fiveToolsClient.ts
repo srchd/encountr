@@ -4,6 +4,8 @@ type Listener = (state: EncounterState) => void
 
 const HP_WOUND_LEVEL_MAX = 3;
 
+//BUG: Make InitativeBoard/fiveToolsClient more robust in currently unhandled situations like a new "player" character appearing without having it in the players list. For example: adding an NPC in the DM Screen
+
 export class FiveToolsClient {
   private _listeners: Listener[] = []
   private _playerCharacters: String[] = []

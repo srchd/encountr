@@ -5,13 +5,19 @@ export default function Login() {
   const { login, register } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isRegistering, setIsRegistering] = useState(false);
 
   const handleSumbit = async () => {
     try {
       if (isRegistering) {
-        await register(email, password);
+        if (password === confirmPassword) {
+          await register(email, password);
+        } else {
+          setError("Passwords do not match!");
+          return;
+        }
       } else {
         await login(email, password);
       }
@@ -45,7 +51,21 @@ export default function Login() {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        {error && (
+      {/* TODO: Better Authentication error display */}
+      </div>
+      {isRegistering && (
+        <div>
+          <h3>Confirm Password</h3>
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+        </div>
+      )}
+
+      {error && (
           <div style={{
             backgroundColor: "#ffe5e5",
             color: "#b00020",
@@ -55,8 +75,7 @@ export default function Login() {
           }}>
             {error}
           </div>
-        )}
-      </div>
+      )}
 
       <div>
         <button onClick={handleSumbit}>
@@ -66,7 +85,10 @@ export default function Login() {
         <button onClick={() => {
           setIsRegistering(!isRegistering);
           setError(null);
-          }}>
+          setEmail("");
+          setPassword("");
+          setConfirmPassword("");
+        }}>
           {isRegistering ? "Switch to Login" : "Switch to Register"}
         </button>
       </div>
@@ -74,9 +96,6 @@ export default function Login() {
       <div>
         <a href="privacy.html" target="_blank">Privacy Policy</a>
       </div>
-
-      {/* <button onClick={() => login(email, password)}>Login</button>
-      <button onClick={() => register(email, password)}>Register</button> */}
     </div>
   );
 }

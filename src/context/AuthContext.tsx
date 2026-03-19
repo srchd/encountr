@@ -1,10 +1,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { auth } from "../firebase";
+import { auth } from "../lib/firebase";
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signOut
+  signOut,
+  deleteUser
 } from "firebase/auth";
 
 import type { User } from "firebase/auth";
@@ -31,8 +32,12 @@ export function AuthProvider({ children }: any) {
 
   const logout = () => signOut(auth);
 
+  const deleteAccount = async () => {
+    if (auth.currentUser) await deleteUser(auth.currentUser);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, register, logout }}>
+    <AuthContext.Provider value={{ user, login, register, logout, deleteAccount }}>
       {!loading && children}
     </AuthContext.Provider>
   );

@@ -1,4 +1,4 @@
-import type { EncounterState, Combatant, CombatantType } from "../domain/encounter"
+import type { EncounterState, Combatant, CombatantType } from "../types/encounter"
 
 type Listener = (state: EncounterState) => void
 
@@ -8,7 +8,7 @@ const HP_WOUND_LEVEL_MAX = 3;
 
 export class FiveToolsClient {
   private _listeners: Listener[] = []
-  private _playerCharacters: String[] = []
+  private _playerCharacters: string[] = []
   private _playersData: { [key: string] : string} = {}
   private _client: PeerVeClient
 
@@ -41,13 +41,13 @@ export class FiveToolsClient {
   }
 
   private _updateEncounterData(data: any){
-    var combatants: Combatant[] = [];
-    var round = data.data.payload.round;
+    const combatants: Combatant[] = [];
+    const round = data.data.payload.round;
 
     for (const [_i, _combatant] of data.data.payload.rows.entries()){
       const combatantType: CombatantType = this._playerCharacters.includes(_combatant.name) ? "player" : "monster";
       const currentHpForVisibility = _combatant.hpCurrent ?? -1;
-      const isHpVisible = currentHpForVisibility == -1 ? false : true;  // currentHp could be 0, which would evaluate to false by default
+      const isHpVisible = currentHpForVisibility === -1 ? false : true;  // currentHp could be 0, which would evaluate to false by default
       // hpWoundLevel:
       // 0: Healthy
       // 1: Hurt (more than half hp)
@@ -78,9 +78,9 @@ export class FiveToolsClient {
   }
 
   private _getImageAddress(name: string, type: CombatantType) {
-    if (type == "monster") return `https://5e.tools/img/bestiary/tokens/XMM/${name}.webp`
+    if (type === "monster") return `https://5e.tools/img/bestiary/tokens/XMM/${name}.webp`
 
-    if (type == "player") return this._playersData[name]
+    if (type === "player") return this._playersData[name]
   }
 
   onStateUpdate(listener: Listener) {

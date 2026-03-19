@@ -64,7 +64,30 @@ The original `firebase.ts` imported `getAnalytics` and stored the result in a lo
 
 ---
 
-## New Directory Structure
+### 6. `src/domain/encounter.ts` → `src/types/encounter.ts`
+
+The `domain/` folder is not a standard React/TypeScript convention. `encounter.ts` contains only TypeScript type and interface definitions (`CombatantType`, `Combatant`, `EncounterState`), which conventionally belong in `src/types/` alongside other type declarations.
+
+**Affected imports** (updated):
+- `src/services/fiveToolsClient.ts`
+- `src/components/CombatantCard.tsx`
+- `src/components/InitiativeBoard.tsx`
+- `src/pages/Board.tsx`
+
+---
+
+### 7. `src/network/fiveToolsClient.ts` → `src/services/fiveToolsClient.ts`
+
+The `network/` folder is not a standard React/TypeScript convention. `fiveToolsClient.ts` is an external API/service client class, which conventionally belongs in `src/services/`.
+
+**Affected imports** (updated):
+- `src/pages/Board.tsx`
+
+---
+
+## Final Directory Structure
+
+```
 src/
 ├── assets/
 │   └── react.svg
@@ -74,19 +97,18 @@ src/
 │   └── InitiativeBoard.tsx
 ├── context/
 │   └── AuthContext.tsx          ← also owns deleteAccount logic (was hooks/deleteAccount.ts)
-├── domain/
-│   └── encounter.ts
 ├── hooks/
 │   └── usePlayers.ts
 ├── lib/
 │   └── firebase.ts              ← moved from src/firebase.ts
-├── network/
-│   └── fiveToolsClient.ts
 ├── pages/
 │   ├── Board.tsx
 │   ├── Dashboard.tsx
 │   └── Login.tsx
+├── services/
+│   └── fiveToolsClient.ts       ← moved from src/network/
 ├── types/
+│   ├── encounter.ts             ← moved from src/domain/
 │   └── peerve-client.d.ts
 ├── App.css
 ├── App.tsx
@@ -94,11 +116,13 @@ src/
 └── main.tsx
 ```
 
-## Deleted Files
+## Deleted Files / Folders
 
-| File | Reason |
+| Path | Reason |
 |---|---|
 | `src/firebase.ts` | Moved to `src/lib/firebase.ts` |
 | `src/hooks/deleteAccount.ts` | Merged into `src/context/AuthContext.tsx` |
 | `src/utils/playerService.ts` | Dead code — superseded by Firestore hook |
 | `src/types/player.ts` | Dead code — only used by deleted `playerService.ts` |
+| `src/domain/` | Renamed to `src/types/` (conventional name for type definitions) |
+| `src/network/` | Renamed to `src/services/` (conventional name for API clients) |

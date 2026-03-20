@@ -1,4 +1,4 @@
-import type { Combatant } from "../domain/encounter"
+import type { Combatant } from "../types/encounter"
 import { HpBar } from "./HpBar"
 
 interface Props {

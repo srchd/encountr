@@ -1,7 +1,7 @@
 import { useLocation } from "react-router-dom";
-import { FiveToolsClient } from "../network/fiveToolsClient";
+import { FiveToolsClient } from "../services/fiveToolsClient";
 import { useEffect, useState } from "react";
-import type { EncounterState } from "../domain/encounter";
+import type { EncounterState } from "../types/encounter";
 import { InitiativeBoard } from "../components/InitiativeBoard";
 
 

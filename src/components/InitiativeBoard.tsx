@@ -1,4 +1,4 @@
-import type { EncounterState } from "../domain/encounter"
+import type { EncounterState } from "../types/encounter"
 import { CombatantCard } from "./CombatantCard"
 
 interface Props {

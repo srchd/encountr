@@ -41,7 +41,7 @@ export class FiveToolsClient {
   }
 
   private _updateEncounterData(data: any){
-    const combatants: Combatant[] = [];
+    let combatants: Combatant[] = [];
     const round = data.data.payload.round;
 
     for (const [_i, _combatant] of data.data.payload.rows.entries()){

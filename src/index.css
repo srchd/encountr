@@ -26,8 +26,6 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
@@ -67,45 +65,4 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-}
-
-#dashboard {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
-}
-
-#dashboard div {
-  padding: 13px;
-}
-
-#account-info {
-  display: flex;
-  flex-direction: row;
-}
-
-#delete-account {
-  color: #000000;
-  margin: auto;
-}
-
-#delete-account button {
-  background-color: #ff0000;
-}
-
-#players {
-  display: flex;
-  flex-direction: row;
-}
-
-#players div {
-  padding: 10px;
 }

@@ -2,11 +2,10 @@ import { usePlayers } from "../hooks/usePlayers";
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { deleteEncountrUser } from "../hooks/deleteAccount";
 
 export default function Dashboard() {
   const { players, addPlayer, deletePlayer } = usePlayers();
-  const { logout, user } = useAuth();
+  const { logout, user, deleteAccount } = useAuth();
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
@@ -24,7 +23,7 @@ export default function Dashboard() {
   const handleAccountDeletion = async () => {
     if (!user) return;
 
-    await deleteEncountrUser();
+    await deleteAccount();
     navigate("/");
   }
 

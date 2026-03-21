@@ -1,6 +1,6 @@
 # Refactoring Summary
 
-This document describes the structural changes made to the `encountr` codebase. No functional behaviour was altered.
+This document describes the structural changes made to the `encountr` codebase. No user-facing behaviour was altered;the priamry changes are internal wiring and module locations, along with the removal of Fireebase Analytics initialisation (disabling telemetry).
 
 ## Changes
 

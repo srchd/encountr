@@ -33,7 +33,11 @@ export function AuthProvider({ children }: any) {
   const logout = () => signOut(auth);
 
   const deleteAccount = async () => {
-    if (auth.currentUser) await deleteUser(auth.currentUser);
+    try {
+      if (auth.currentUser) await deleteUser(auth.currentUser);
+    } catch (error) {
+      console.error("Error deleting account:", error);
+    }
   };
 
   return (

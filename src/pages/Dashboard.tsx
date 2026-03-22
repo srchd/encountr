@@ -34,11 +34,9 @@ export default function Dashboard() {
     padding: "0.75rem",
     backgroundColor: "#1a1a1a",
     color: "rgba(255, 255, 255, 0.87)",
-    border: "1px solid #444",
     borderRadius: "6px",
     fontSize: "1rem",
-    boxSizing: "border-box",
-    transition: "border-color 0.25s"
+    boxSizing: "border-box"
   };
 
   const primaryButtonStyle: React.CSSProperties = {
@@ -75,8 +73,7 @@ export default function Dashboard() {
     border: "1px solid #333"
   };
 
-  const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => e.target.style.borderColor = "#646cff";
-  const handleInputBlur = (e: React.FocusEvent<HTMLInputElement>) => e.target.style.borderColor = "#444";
+
 
   return (
     <div id="dashboard" style={{ display: "flex", justifyContent: "center", alignItems: "flex-start", minHeight: "100vh", paddingTop: "2rem", paddingBottom: "2rem" }}>
@@ -128,12 +125,11 @@ export default function Dashboard() {
               Token
             </label>
             <input
+              className="styled-input"
               placeholder="Enter your token"
               value={token}
               onChange={(e) => setToken(e.target.value)}
               style={inputStyle}
-              onFocus={handleInputFocus}
-              onBlur={handleInputBlur}
             />
           </div>
           <button
@@ -153,12 +149,11 @@ export default function Dashboard() {
               Name
             </label>
             <input
+              className="styled-input"
               placeholder="Enter player name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               style={inputStyle}
-              onFocus={handleInputFocus}
-              onBlur={handleInputBlur}
             />
           </div>
           <div style={{ marginBottom: "1rem" }}>
@@ -166,12 +161,11 @@ export default function Dashboard() {
               Avatar URL
             </label>
             <input
+              className="styled-input"
               placeholder="Enter avatar URL"
               value={avatar}
               onChange={(e) => setAvatar(e.target.value)}
               style={inputStyle}
-              onFocus={handleInputFocus}
-              onBlur={handleInputBlur}
             />
           </div>
           <button

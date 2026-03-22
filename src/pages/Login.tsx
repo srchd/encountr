@@ -39,6 +39,7 @@ export default function Login() {
             E-mail
           </label>
           <input
+            className="styled-input"
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -48,14 +49,10 @@ export default function Login() {
               padding: "0.75rem",
               backgroundColor: "#1a1a1a",
               color: "rgba(255, 255, 255, 0.87)",
-              border: "1px solid #444",
               borderRadius: "6px",
               fontSize: "1rem",
-              boxSizing: "border-box",
-              transition: "border-color 0.25s"
+              boxSizing: "border-box"
             }}
-            onFocus={(e) => e.target.style.borderColor = "#646cff"}
-            onBlur={(e) => e.target.style.borderColor = "#444"}
           />
         </div>
 
@@ -64,6 +61,7 @@ export default function Login() {
             Password
           </label>
           <input
+            className="styled-input"
             type="password"
             placeholder="Enter your password"
             value={password}
@@ -74,14 +72,10 @@ export default function Login() {
               padding: "0.75rem",
               backgroundColor: "#1a1a1a",
               color: "rgba(255, 255, 255, 0.87)",
-              border: "1px solid #444",
               borderRadius: "6px",
               fontSize: "1rem",
-              boxSizing: "border-box",
-              transition: "border-color 0.25s"
+              boxSizing: "border-box"
             }}
-            onFocus={(e) => e.target.style.borderColor = "#646cff"}
-            onBlur={(e) => e.target.style.borderColor = "#444"}
           />
         </div>
 
@@ -91,6 +85,7 @@ export default function Login() {
               Confirm Password
             </label>
             <input
+              className="styled-input"
               type="password"
               placeholder="Confirm your password"
               value={confirmPassword}
@@ -101,14 +96,10 @@ export default function Login() {
                 padding: "0.75rem",
                 backgroundColor: "#1a1a1a",
                 color: "rgba(255, 255, 255, 0.87)",
-                border: "1px solid #444",
                 borderRadius: "6px",
                 fontSize: "1rem",
-                boxSizing: "border-box",
-                transition: "border-color 0.25s"
+                boxSizing: "border-box"
               }}
-              onFocus={(e) => e.target.style.borderColor = "#646cff"}
-              onBlur={(e) => e.target.style.borderColor = "#444"}
             />
           </div>
         )}
@@ -180,7 +171,7 @@ export default function Login() {
         </div>
 
         <div style={{ textAlign: "center", marginTop: "2rem" }}>
-          <a href="privacy.html" target="_blank" style={{ fontSize: "0.9rem" }}>
+          <a href="privacy.html" target="_blank" rel="noopener noreferrer" style={{ fontSize: "0.9rem" }}>
             Privacy Policy
           </a>
         </div>

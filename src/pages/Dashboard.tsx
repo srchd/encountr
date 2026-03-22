@@ -77,7 +77,7 @@ export default function Dashboard() {
 
   return (
     <div id="dashboard" style={{ display: "flex", justifyContent: "center", alignItems: "flex-start", minHeight: "100vh", paddingTop: "2rem", paddingBottom: "2rem" }}>
-      <div style={{ maxWidth: "500px", width: "100%", padding: "2rem" }}>
+      <div style={{ maxWidth: "800px", width: "100%", padding: "2rem" }}>
         <div style={{ marginBottom: "2rem" }}>
           <h1 style={{ margin: "0 0 1rem 0", textAlign: "center" }}>Dashboard</h1>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -118,64 +118,66 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div style={sectionStyle}>
-          <h3 style={{ margin: "0 0 1rem 0" }}>Connect to 5etools DM Screen</h3>
-          <div style={{ marginBottom: "1rem" }}>
-            <label style={{ display: "block", marginBottom: "0.5rem", textAlign: "left", fontWeight: "500" }}>
-              Token
-            </label>
-            <input
-              className="styled-input"
-              placeholder="Enter your token"
-              value={token}
-              onChange={(e) => setToken(e.target.value)}
-              style={inputStyle}
-            />
+        <div style={{ display: "flex", gap: "1rem", marginBottom: "2rem" }}>
+          <div style={{ ...sectionStyle, flex: 1, marginBottom: 0 }}>
+            <h3 style={{ margin: "0 0 1rem 0" }}>Connect to 5etools DM Screen</h3>
+            <div style={{ marginBottom: "1rem" }}>
+              <label style={{ display: "block", marginBottom: "0.5rem", textAlign: "left", fontWeight: "500" }}>
+                Token
+              </label>
+              <input
+                className="styled-input"
+                placeholder="Enter your token"
+                value={token}
+                onChange={(e) => setToken(e.target.value)}
+                style={inputStyle}
+              />
+            </div>
+            <button
+              onClick={handleConnect}
+              style={primaryButtonStyle}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#535bf2"}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#646cff"}
+            >
+              Connect
+            </button>
           </div>
-          <button
-            onClick={handleConnect}
-            style={primaryButtonStyle}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#535bf2"}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#646cff"}
-          >
-            Connect
-          </button>
-        </div>
 
-        <div style={sectionStyle}>
-          <h3 style={{ margin: "0 0 1rem 0" }}>Add Player</h3>
-          <div style={{ marginBottom: "1rem" }}>
-            <label style={{ display: "block", marginBottom: "0.5rem", textAlign: "left", fontWeight: "500" }}>
-              Name
-            </label>
-            <input
-              className="styled-input"
-              placeholder="Enter player name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              style={inputStyle}
-            />
+          <div style={{ ...sectionStyle, flex: 1, marginBottom: 0 }}>
+            <h3 style={{ margin: "0 0 1rem 0" }}>Add Player</h3>
+            <div style={{ marginBottom: "1rem" }}>
+              <label style={{ display: "block", marginBottom: "0.5rem", textAlign: "left", fontWeight: "500" }}>
+                Name
+              </label>
+              <input
+                className="styled-input"
+                placeholder="Enter player name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                style={inputStyle}
+              />
+            </div>
+            <div style={{ marginBottom: "1rem" }}>
+              <label style={{ display: "block", marginBottom: "0.5rem", textAlign: "left", fontWeight: "500" }}>
+                Avatar URL
+              </label>
+              <input
+                className="styled-input"
+                placeholder="Enter avatar URL"
+                value={avatar}
+                onChange={(e) => setAvatar(e.target.value)}
+                style={inputStyle}
+              />
+            </div>
+            <button
+              onClick={() => addPlayer(name, avatar)}
+              style={primaryButtonStyle}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#535bf2"}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#646cff"}
+            >
+              Add Player
+            </button>
           </div>
-          <div style={{ marginBottom: "1rem" }}>
-            <label style={{ display: "block", marginBottom: "0.5rem", textAlign: "left", fontWeight: "500" }}>
-              Avatar URL
-            </label>
-            <input
-              className="styled-input"
-              placeholder="Enter avatar URL"
-              value={avatar}
-              onChange={(e) => setAvatar(e.target.value)}
-              style={inputStyle}
-            />
-          </div>
-          <button
-            onClick={() => addPlayer(name, avatar)}
-            style={primaryButtonStyle}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#535bf2"}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#646cff"}
-          >
-            Add Player
-          </button>
         </div>
 
         <div style={sectionStyle}>
@@ -183,7 +185,7 @@ export default function Dashboard() {
           {players.length === 0 && (
             <p style={{ color: "#888", margin: "0" }}>No players added yet.</p>
           )}
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", justifyContent: "center" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))", gap: "1rem" }}>
             {players.map(p => (
               <div key={p.id} style={{
                 padding: "1rem",

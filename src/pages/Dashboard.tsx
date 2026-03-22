@@ -122,10 +122,14 @@ export default function Dashboard() {
           <div style={{ ...sectionStyle, flex: 1, marginBottom: 0 }}>
             <h3 style={{ margin: "0 0 1rem 0" }}>Connect to 5etools DM Screen</h3>
             <div style={{ marginBottom: "1rem" }}>
-              <label style={{ display: "block", marginBottom: "0.5rem", textAlign: "left", fontWeight: "500" }}>
+              <label
+                htmlFor="token-input"
+                style={{ display: "block", marginBottom: "0.5rem", textAlign: "left", fontWeight: "500" }}
+              >
                 Token
               </label>
               <input
+                id="token-input"
                 className="styled-input"
                 placeholder="Enter your token"
                 value={token}
@@ -146,10 +150,14 @@ export default function Dashboard() {
           <div style={{ ...sectionStyle, flex: 1, marginBottom: 0 }}>
             <h3 style={{ margin: "0 0 1rem 0" }}>Add Player</h3>
             <div style={{ marginBottom: "1rem" }}>
-              <label style={{ display: "block", marginBottom: "0.5rem", textAlign: "left", fontWeight: "500" }}>
+              <label
+                htmlFor="name-input"
+                style={{ display: "block", marginBottom: "0.5rem", textAlign: "left", fontWeight: "500" }}
+              >
                 Name
               </label>
               <input
+                id="name-input"
                 className="styled-input"
                 placeholder="Enter player name"
                 value={name}
@@ -158,10 +166,14 @@ export default function Dashboard() {
               />
             </div>
             <div style={{ marginBottom: "1rem" }}>
-              <label style={{ display: "block", marginBottom: "0.5rem", textAlign: "left", fontWeight: "500" }}>
+              <label
+                htmlFor="avatar-input"
+                style={{ display: "block", marginBottom: "0.5rem", textAlign: "left", fontWeight: "500" }}
+              >
                 Avatar URL
               </label>
               <input
+                id="avatar-input"
                 className="styled-input"
                 placeholder="Enter avatar URL"
                 value={avatar}
@@ -198,7 +210,13 @@ export default function Dashboard() {
                 gap: "0.5rem",
                 minWidth: "120px"
               }}>
-                <img src={p.avatarUrl} width={80} style={{ borderRadius: "50%", objectFit: "cover", height: "80px" }} />
+                <img
+                  src={p.avatarUrl}
+                  alt={`${p.name}'s avatar`}
+                  loading="lazy"
+                  width={80}
+                  style={{ borderRadius: "50%", objectFit: "cover", height: "80px" }}
+                />
                 <p style={{ margin: "0", fontWeight: "500" }}>{p.name}</p>
                 <button
                   onClick={() => deletePlayer(p.id)}

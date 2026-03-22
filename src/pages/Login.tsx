@@ -9,7 +9,7 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null);
   const [isRegistering, setIsRegistering] = useState(false);
 
-  const handleSumbit = async () => {
+  const handleSubmit = async () => {
     try {
       if (isRegistering) {
         if (password === confirmPassword) {
@@ -35,15 +35,19 @@ export default function Login() {
         </div>
 
         <div style={{ marginBottom: "1.5rem" }}>
-          <label style={{ display: "block", marginBottom: "0.5rem", textAlign: "left", fontWeight: "500" }}>
+          <label
+            htmlFor="email-input"
+            style={{ display: "block", marginBottom: "0.5rem", textAlign: "left", fontWeight: "500" }}
+          >
             E-mail
           </label>
           <input
+            id="email-input"
             className="styled-input"
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSumbit()}
+            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
             style={{
               width: "100%",
               padding: "0.75rem",
@@ -57,16 +61,20 @@ export default function Login() {
         </div>
 
         <div style={{ marginBottom: "1.5rem" }}>
-          <label style={{ display: "block", marginBottom: "0.5rem", textAlign: "left", fontWeight: "500" }}>
+          <label
+            htmlFor="password-input"
+            style={{ display: "block", marginBottom: "0.5rem", textAlign: "left", fontWeight: "500" }}
+          >
             Password
           </label>
           <input
+            id="password-input"
             className="styled-input"
             type="password"
             placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSumbit()}
+            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
             style={{
               width: "100%",
               padding: "0.75rem",
@@ -81,16 +89,20 @@ export default function Login() {
 
         {isRegistering && (
           <div style={{ marginBottom: "1.5rem" }}>
-            <label style={{ display: "block", marginBottom: "0.5rem", textAlign: "left", fontWeight: "500" }}>
+            <label
+              htmlFor="confirm-password-input"
+              style={{ display: "block", marginBottom: "0.5rem", textAlign: "left", fontWeight: "500" }}
+            >
               Confirm Password
             </label>
             <input
+              id="confirm-password-input"
               className="styled-input"
               type="password"
               placeholder="Confirm your password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSumbit()}
+              onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
               style={{
                 width: "100%",
                 padding: "0.75rem",
@@ -120,7 +132,7 @@ export default function Login() {
 
         <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", marginBottom: "1.5rem" }}>
           <button 
-            onClick={handleSumbit}
+            onClick={handleSubmit}
             style={{
               padding: "0.75rem 1.5rem",
               backgroundColor: "#646cff",

@@ -1,7 +1,5 @@
 # Encountr
 
-TODO Modify README to correspond for the hosted webapp
-
 This tool allows you to have a displayable version for encounters tracked on [5etools DM Screen](https://5e.tools/dmscreen.html).
 
 Using 5etools' DM Screen, you will be able to have the page display information from the encounter, such as:
@@ -16,26 +14,23 @@ Using 5etools' DM Screen, you will be able to have the page display information 
 
 ![example](doc/images/example.png)
 
-## Installation Guide
-### Windows
-1. Make sure [Docker Desktop](https://docs.docker.com/desktop/setup/install/windows-install/) is installed
-2. Make sure Docker Desktop is running.
-3. Start/double click on **build_docker.bat**
-4. Type in your browser: http://YOUR.LOCAL.IP.ADDRESS:8080
-
 ## How To Use
-### Windows
-1. Start/double click on **start_docker.bat**
-  - Or just type `docker compose up` if display and hosting will be done on the same machine
-2. Type in your browser: http://YOUR.LOCAL.IP.ADDRESS:8080
-3. Start up [5etools' DM Screen](https://5e.tools/dmscreen.html)
-4. Add an Initiative Tracker (Plus -> Special -> Initiative Tracker)
-5. Click on the ![profile_icon](doc/images/dmscreen_profile_icon.png) icon.
+### If you would like to use the local app, where you do not need to register, head over to [Local repo](https://github.com/srchd/dnd-5etools-encounter-display)
+
+#### Dashboard:
+![Dahsboard](doc/images/dashboard.png)
+
+1. Create an account (this is needed to save your players, guest mode will be coming soon)
+2. Add your players:
+   - Name
+   - Avatar URL (currently manual uploads are not supported)
+3. Go to [5etools DM Screen](https://5e.tools/dmscreen.html)
+4. Add an **Initiative Tracker** element to the screen
+5. Click on the ![DMScreenProfileIcon](doc/images/dmscreen_profile_icon.png) icon
 6. Select Standard
 7. Start Server
 8. Copy token
-9. Paste token in the webapp
-10. Press connect.
+9. Paste token in the input field at the Dashboard and press **Connect**
 
 ## Customization Options
 ![InitiativeTracker](doc/images/initiative_tracker.png)
@@ -49,18 +44,10 @@ if the settings is not changed. If needed to show the exat HP, turn on these set
   - Player View: Show exact player HP
   - Player View: Show exact monster HP
 
-**Note:** By default, players' HP is not filled. If the DM is not tracking it on the DM Screen, it will always show like they at full health.
-
-- In order to show the players' avatar/image, you need to modify the `public/assets/players.json` file.
-  - Modify player name
-  - Add an URL or local image file to the `imageUrl` field.
-
-- If any modification has been done, you need to **rebuild** and **restart** the docker image!
+**Note:** By default, players' HP is not filled out. If the DM is not tracking it on the DM Screen, it will always show like they at full health.
 
 ## Troubleshooting/FAQ:
 1. Monsters are not showing:
    - Make sure that the "eye" icon is not crossed out in the DM Screen.
-2. Website does not load:
-   - If the web page will be displayed on a different machine, than the docker is running on, you need to use **start_docker.bat**. After that, make sure that you are trying to connect to your **LOCAL IPv4** address. You can check it by running **ipconfig** on Windows. You will see a bunch of stuff, but you need the one that *usually* starts with **192.168**
 
 If you face a problem which is not detailed here, raise an issue.

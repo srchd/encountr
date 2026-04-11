@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Dashboard from '../../pages/Dashboard';
 
@@ -143,7 +143,7 @@ describe('Dashboard page', () => {
     await user.click(screen.getByText('Delete Account'));
 
     expect(mockDeleteAccount).toHaveBeenCalled();
-    expect(mockNavigate).toHaveBeenCalledWith('/');
+    await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith('/'));
   });
 
   it('renders player avatars with alt text', () => {

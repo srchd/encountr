@@ -58,7 +58,7 @@ describe('AuthProvider', () => {
     });
   });
 
-  // Might be worthless to test if mocking ocks the thing that needs to be mocked, but I like it
+  // Might be worthless to test if mocking mocks the thing that needs to be mocked, but I like it
   it('provides user from onAuthStateChanged', async () => {
     mockOnAuthStateChanged.mockImplementation((_auth: any, cb: any) => {
       cb({ uid: 'user-abc' });

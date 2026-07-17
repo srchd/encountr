@@ -1,19 +1,22 @@
 import { usePlayers } from "../hooks/usePlayers";
+import { useToken } from "../hooks/useToken";
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   const { players, addPlayer, deletePlayer } = usePlayers();
+  const { token, setToken, saveToken } = useToken();
   const { logout, user, deleteAccount } = useAuth();
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
   const [avatar, setAvatar] = useState("");
-  const [token, setToken] = useState("");
 
   const handleConnect = () => {
     if (!token.trim()) return;
+
+    saveToken(token.trim());
 
     navigate("/board", {
       state: { players, token }

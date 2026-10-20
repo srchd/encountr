@@ -8,6 +8,7 @@ const mockLogout = vi.fn();
 const mockDeleteAccount = vi.fn();
 const mockAddPlayer = vi.fn();
 const mockDeletePlayer = vi.fn();
+const mockSaveToken = vi.fn();
 
 let mockPlayers: any[] = [];
 
@@ -30,6 +31,16 @@ vi.mock('../../hooks/usePlayers', () => ({
     deletePlayer: mockDeletePlayer,
   }),
 }));
+
+vi.mock('../../hooks/useToken', async () => {
+  const { useState } = await import('react');
+  return {
+    useToken: () => {
+      const [token, setToken] = useState('');
+      return { token, setToken, saveToken: mockSaveToken };
+    },
+  };
+});
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -116,6 +127,7 @@ describe('Dashboard page', () => {
     expect(mockNavigate).toHaveBeenCalledWith('/board', {
       state: { players: mockPlayers, token: 'my-token' },
     });
+    expect(mockSaveToken).toHaveBeenCalledWith('my-token');
   });
 
   it('does not navigate when token is empty', async () => {

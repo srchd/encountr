@@ -24,10 +24,20 @@ function makePlayers(names: { name: string; avatarUrl: string }[]) {
 function makePayload(rows: any[], round = 1) {
   return {
     data: {
+      type: 'state',
       payload: {
         round,
         rows,
       },
+    },
+  };
+}
+
+function makeShowImagePayload(imageHref: any) {
+  return {
+    data: {
+      type: 'showImage',
+      payload: { imageHref },
     },
   };
 }
@@ -241,5 +251,127 @@ describe('FiveToolsClient', () => {
     );
 
     expect(listener.mock.calls[0][0].combatants[0].isVisible).toBe(true);
+  });
+
+  it('ignores payloads that are neither state nor showImage', async () => {
+    const client = new FiveToolsClient(makePlayers([]), 'tok');
+    const listener = vi.fn();
+    client.onStateUpdate(listener);
+
+    await vi.waitFor(() => expect(capturedDataHandler).not.toBeNull());
+
+    capturedDataHandler!({ data: { type: 'somethingElse', payload: {} } });
+
+    expect(listener).not.toHaveBeenCalled();
+  });
+
+  it('updates monster image when DM shows an internal image', async () => {
+    const client = new FiveToolsClient(makePlayers([]), 'tok');
+    const listener = vi.fn();
+    client.onStateUpdate(listener);
+
+    await vi.waitFor(() => expect(capturedDataHandler).not.toBeNull());
+
+    capturedDataHandler!(
+      makePayload([
+        { name: 'Splugoth the Returned', initiative: 10, hpCurrent: 10, hpMax: 10, isActive: false },
+        { name: 'Goblin', initiative: 5, hpCurrent: 7, hpMax: 7, isActive: false },
+      ]),
+    );
+    capturedDataHandler!(
+      makeShowImagePayload({ type: 'internal', path: 'bestiary/AI/Splugoth the Returned.webp' }),
+    );
+
+    expect(listener).toHaveBeenCalledTimes(2);
+    const state: EncounterState = listener.mock.calls[1][0];
+    expect(state.combatants[0].imageUrl).toBe(
+      'https://5e.tools/img/bestiary/AI/Splugoth the Returned.webp',
+    );
+    expect(state.combatants[1].imageUrl).toBe(
+      'https://5e.tools/img/bestiary/tokens/XMM/Goblin.webp',
+    );
+  });
+
+  it('keeps shown image across subsequent state payloads', async () => {
+    const client = new FiveToolsClient(makePlayers([]), 'tok');
+    const listener = vi.fn();
+    client.onStateUpdate(listener);
+
+    await vi.waitFor(() => expect(capturedDataHandler).not.toBeNull());
+
+    capturedDataHandler!(
+      makeShowImagePayload({ type: 'internal', path: 'bestiary/AI/Splugoth the Returned.webp' }),
+    );
+    expect(listener).not.toHaveBeenCalled();
+
+    capturedDataHandler!(
+      makePayload([
+        { name: 'Splugoth the Returned', initiative: 10, hpCurrent: 10, hpMax: 10, isActive: false },
+      ]),
+    );
+
+    const state: EncounterState = listener.mock.calls[0][0];
+    expect(state.combatants[0].imageUrl).toBe(
+      'https://5e.tools/img/bestiary/AI/Splugoth the Returned.webp',
+    );
+  });
+
+  it('supports external shown images', async () => {
+    const client = new FiveToolsClient(makePlayers([]), 'tok');
+    const listener = vi.fn();
+    client.onStateUpdate(listener);
+
+    await vi.waitFor(() => expect(capturedDataHandler).not.toBeNull());
+
+    capturedDataHandler!(
+      makePayload([{ name: 'Beholder', initiative: 10, hpCurrent: 10, hpMax: 10, isActive: false }]),
+    );
+    capturedDataHandler!(
+      makeShowImagePayload({ type: 'external', url: 'https://example.com/img/Beholder.png' }),
+    );
+
+    const state: EncounterState = listener.mock.calls[1][0];
+    expect(state.combatants[0].imageUrl).toBe('https://example.com/img/Beholder.png');
+  });
+
+  it('fills the only monster without a working picture even when a player is active', async () => {
+    const OriginalImage = globalThis.Image;
+    // Fake Image: default XMM tokens load, except for the homebrew monster
+    (globalThis as any).Image = class {
+      onload: (() => void) | null = null;
+      onerror: (() => void) | null = null;
+      set src(url: string) {
+        if (url.includes('Homebrew Horror')) this.onerror?.();
+        else this.onload?.();
+      }
+    };
+
+    try {
+      const players = makePlayers([{ name: 'Gimli', avatarUrl: 'http://img/gimli.png' }]);
+      const client = new FiveToolsClient(players, 'tok');
+      const listener = vi.fn();
+      client.onStateUpdate(listener);
+
+      await vi.waitFor(() => expect(capturedDataHandler).not.toBeNull());
+
+      capturedDataHandler!(
+        makePayload([
+          { name: 'Gimli', initiative: 20, hpCurrent: 30, hpMax: 30, isActive: true },
+          { name: 'Goblin', initiative: 12, hpCurrent: 7, hpMax: 7, isActive: false },
+          { name: 'Homebrew Horror', initiative: 8, hpCurrent: 40, hpMax: 40, isActive: false },
+        ]),
+      );
+      capturedDataHandler!(
+        makeShowImagePayload({ type: 'external', url: 'https://example.com/avatars/123/abc.png' }),
+      );
+
+      expect(listener).toHaveBeenCalledTimes(2);
+      const state: EncounterState = listener.mock.calls[1][0];
+      expect(state.combatants[0].imageUrl).toBe('http://img/gimli.png');
+      expect(state.combatants[1].imageUrl).toBe('https://5e.tools/img/bestiary/tokens/XMM/Goblin.webp');
+      expect(state.combatants[2].imageUrl).toBe('https://example.com/avatars/123/abc.png');
+    } finally {
+      globalThis.Image = OriginalImage;
+    }
   });
 });

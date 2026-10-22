@@ -1,8 +1,10 @@
 import type { EncounterState, Combatant, CombatantType } from "../types/encounter"
 
 type Listener = (state: EncounterState) => void
+type ImageStatus = "pending" | "ok" | "broken"
 
 const HP_WOUND_LEVEL_MAX = 3;
+const FIVE_TOOLS_IMG_BASE_URL = "https://5e.tools/img";
 
 //BUG: Make InitativeBoard/fiveToolsClient more robust in currently unhandled situations like a new "player" character appearing without having it in the players list. For example: adding an NPC in the DM Screen
 
@@ -10,6 +12,12 @@ export class FiveToolsClient {
   private _listeners: Listener[] = []
   private _playerCharacters: string[] = []
   private _playersData: { [key: string] : string} = {}
+  // Images received via "showImage", keyed by monster name. Kept across state payloads,
+  // since homebrew monsters' tokens are not always under the default bestiary URL.
+  private _imageOverrides: { [key: string] : string} = {}
+  private _lastState: EncounterState | null = null
+  // Load status of each monster's default token URL, so "showImage" can tell which monsters lack a picture.
+  private _defaultImageStatus: { [key: string] : ImageStatus} = {}
   private _client: PeerVeClient
 
   constructor(players: any[], token: string) {
@@ -22,7 +30,7 @@ export class FiveToolsClient {
     try {
       await this._client.pConnectToServer(
         token,
-        (data) => this._updateEncounterData(data),
+        (data) => this._handleData(data),
         {
           label: "kaka",
           serialization: "json",
@@ -38,6 +46,60 @@ export class FiveToolsClient {
       this._playerCharacters.push(p.name);
       this._playersData[p.name] = p.avatarUrl;
     }
+  }
+
+  private _handleData(data: any) {
+    const type = data?.data?.type;
+    if (type === "state") this._updateEncounterData(data);
+    else if (type === "showImage") this._updateShownImage(data);
+  }
+
+  private _updateShownImage(data: any) {
+    const imageHref = data.data.payload?.imageHref;
+    if (!imageHref) return;
+
+    let url: string | undefined;
+    if (imageHref.type === "internal" && imageHref.path) url = `${FIVE_TOOLS_IMG_BASE_URL}/${imageHref.path}`;
+    else if (imageHref.type === "external" && imageHref.url) url = imageHref.url;
+    if (!url) return;
+
+    // e.g. "bestiary/AI/Splugoth the Returned.webp" -> "Splugoth the Returned".
+    // External URLs (e.g. D&D Beyond) have opaque filenames that won't match any monster.
+    const rawName = url.split("?")[0].split("/").pop() ?? "";
+    let fileName = rawName;
+    try { fileName = decodeURIComponent(rawName); } catch { /* keep raw name */ }
+    const nameFromFile = fileName.replace(/\.[^.]+$/, "");
+
+    const targetName = this._resolveImageTarget(nameFromFile);
+    if (!targetName) return;
+
+    this._imageOverrides[targetName] = url;
+
+    if (!this._lastState) return;
+    this._emit({
+      ...this._lastState,
+      combatants: this._lastState.combatants.map(c =>
+        c.type === "monster" && c.name === targetName ? { ...c, imageUrl: url } : c
+      )
+    });
+  }
+
+  private _resolveImageTarget(nameFromFile: string): string | undefined {
+    const monsters = this._lastState?.combatants.filter(c => c.type === "monster") ?? [];
+
+    if (nameFromFile && monsters.some(c => c.name === nameFromFile)) return nameFromFile;
+
+    if (!this._lastState) return nameFromFile || undefined;
+
+    // Monsters whose default token is known to load already have a picture; pending/broken ones may not.
+    const imageless = monsters.filter(c => !this._imageOverrides[c.name] && this._defaultImageStatus[c.name] !== "ok");
+
+    const active = imageless.find(c => c.isActive);
+    if (active) return active.name;
+
+    if (imageless.length === 1) return imageless[0].name;
+
+    return undefined;
   }
 
   private _updateEncounterData(data: any){
@@ -78,9 +140,24 @@ export class FiveToolsClient {
   }
 
   private _getImageAddress(name: string, type: CombatantType) {
-    if (type === "monster") return `https://5e.tools/img/bestiary/tokens/XMM/${name}.webp`
+    if (type === "monster") {
+      if (this._imageOverrides[name]) return this._imageOverrides[name];
+      const defaultUrl = `${FIVE_TOOLS_IMG_BASE_URL}/bestiary/tokens/XMM/${name}.webp`;
+      this._probeDefaultImage(name, defaultUrl);
+      return defaultUrl;
+    }
 
     if (type === "player") return this._playersData[name]
+  }
+
+  private _probeDefaultImage(name: string, url: string) {
+    if (this._defaultImageStatus[name] || typeof Image === "undefined") return;
+
+    this._defaultImageStatus[name] = "pending";
+    const img = new Image();
+    img.onload = () => { this._defaultImageStatus[name] = "ok"; };
+    img.onerror = () => { this._defaultImageStatus[name] = "broken"; };
+    img.src = url;
   }
 
   onStateUpdate(listener: Listener) {
@@ -88,6 +165,7 @@ export class FiveToolsClient {
   }
 
   private _emit(state: EncounterState) {
+    this._lastState = state
     this._listeners.forEach(l => l(state))
   }
 }

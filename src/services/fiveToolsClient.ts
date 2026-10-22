@@ -60,20 +60,40 @@ export class FiveToolsClient {
     else if (imageHref.type === "external" && imageHref.url) url = imageHref.url;
     if (!url) return;
 
-    // e.g. "bestiary/AI/Splugoth the Returned.webp" -> "Splugoth the Returned"
+    // e.g. "bestiary/AI/Splugoth the Returned.webp" -> "Splugoth the Returned".
+    // External URLs (e.g. D&D Beyond) have opaque filenames that won't match any monster.
     const fileName = decodeURIComponent(url.split("/").pop() ?? "");
-    const name = fileName.replace(/\.[^.]+$/, "");
-    if (!name) return;
+    const nameFromFile = fileName.replace(/\.[^.]+$/, "");
 
-    this._imageOverrides[name] = url;
+    const targetName = this._resolveImageTarget(nameFromFile);
+    if (!targetName) return;
+
+    this._imageOverrides[targetName] = url;
 
     if (!this._lastState) return;
     this._emit({
       ...this._lastState,
       combatants: this._lastState.combatants.map(c =>
-        c.type === "monster" && c.name === name ? { ...c, imageUrl: url } : c
+        c.type === "monster" && c.name === targetName ? { ...c, imageUrl: url } : c
       )
     });
+  }
+
+  private _resolveImageTarget(nameFromFile: string): string | undefined {
+    const monsters = this._lastState?.combatants.filter(c => c.type === "monster") ?? [];
+
+    if (nameFromFile && monsters.some(c => c.name === nameFromFile)) return nameFromFile;
+
+    if (!this._lastState) return nameFromFile || undefined;
+
+    const imageless = monsters.filter(c => !this._imageOverrides[c.name]);
+
+    const active = imageless.find(c => c.isActive);
+    if (active) return active.name;
+
+    if (imageless.length === 1) return imageless[0].name;
+
+    return undefined;
   }
 
   private _updateEncounterData(data: any){

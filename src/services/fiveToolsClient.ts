@@ -3,6 +3,7 @@ import type { EncounterState, Combatant, CombatantType } from "../types/encounte
 type Listener = (state: EncounterState) => void
 
 const HP_WOUND_LEVEL_MAX = 3;
+const FIVE_TOOLS_IMG_BASE_URL = "https://5e.tools/img";
 
 //BUG: Make InitativeBoard/fiveToolsClient more robust in currently unhandled situations like a new "player" character appearing without having it in the players list. For example: adding an NPC in the DM Screen
 
@@ -10,6 +11,10 @@ export class FiveToolsClient {
   private _listeners: Listener[] = []
   private _playerCharacters: string[] = []
   private _playersData: { [key: string] : string} = {}
+  // Images received via "showImage", keyed by monster name. Kept across state payloads,
+  // since homebrew monsters' tokens are not always under the default bestiary URL.
+  private _imageOverrides: { [key: string] : string} = {}
+  private _lastState: EncounterState | null = null
   private _client: PeerVeClient
 
   constructor(players: any[], token: string) {
@@ -22,7 +27,7 @@ export class FiveToolsClient {
     try {
       await this._client.pConnectToServer(
         token,
-        (data) => this._updateEncounterData(data),
+        (data) => this._handleData(data),
         {
           label: "kaka",
           serialization: "json",
@@ -38,6 +43,37 @@ export class FiveToolsClient {
       this._playerCharacters.push(p.name);
       this._playersData[p.name] = p.avatarUrl;
     }
+  }
+
+  private _handleData(data: any) {
+    const type = data?.data?.type;
+    if (type === "state") this._updateEncounterData(data);
+    else if (type === "showImage") this._updateShownImage(data);
+  }
+
+  private _updateShownImage(data: any) {
+    const imageHref = data.data.payload?.imageHref;
+    if (!imageHref) return;
+
+    let url: string | undefined;
+    if (imageHref.type === "internal" && imageHref.path) url = `${FIVE_TOOLS_IMG_BASE_URL}/${imageHref.path}`;
+    else if (imageHref.type === "external" && imageHref.url) url = imageHref.url;
+    if (!url) return;
+
+    // e.g. "bestiary/AI/Splugoth the Returned.webp" -> "Splugoth the Returned"
+    const fileName = decodeURIComponent(url.split("/").pop() ?? "");
+    const name = fileName.replace(/\.[^.]+$/, "");
+    if (!name) return;
+
+    this._imageOverrides[name] = url;
+
+    if (!this._lastState) return;
+    this._emit({
+      ...this._lastState,
+      combatants: this._lastState.combatants.map(c =>
+        c.type === "monster" && c.name === name ? { ...c, imageUrl: url } : c
+      )
+    });
   }
 
   private _updateEncounterData(data: any){
@@ -78,7 +114,7 @@ export class FiveToolsClient {
   }
 
   private _getImageAddress(name: string, type: CombatantType) {
-    if (type === "monster") return `https://5e.tools/img/bestiary/tokens/XMM/${name}.webp`
+    if (type === "monster") return this._imageOverrides[name] ?? `${FIVE_TOOLS_IMG_BASE_URL}/bestiary/tokens/XMM/${name}.webp`
 
     if (type === "player") return this._playersData[name]
   }
@@ -88,6 +124,7 @@ export class FiveToolsClient {
   }
 
   private _emit(state: EncounterState) {
+    this._lastState = state
     this._listeners.forEach(l => l(state))
   }
 }

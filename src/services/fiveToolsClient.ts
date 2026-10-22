@@ -1,6 +1,7 @@
 import type { EncounterState, Combatant, CombatantType } from "../types/encounter"
 
 type Listener = (state: EncounterState) => void
+type ImageStatus = "pending" | "ok" | "broken"
 
 const HP_WOUND_LEVEL_MAX = 3;
 const FIVE_TOOLS_IMG_BASE_URL = "https://5e.tools/img";
@@ -15,6 +16,8 @@ export class FiveToolsClient {
   // since homebrew monsters' tokens are not always under the default bestiary URL.
   private _imageOverrides: { [key: string] : string} = {}
   private _lastState: EncounterState | null = null
+  // Load status of each monster's default token URL, so "showImage" can tell which monsters lack a picture.
+  private _defaultImageStatus: { [key: string] : ImageStatus} = {}
   private _client: PeerVeClient
 
   constructor(players: any[], token: string) {
@@ -86,7 +89,8 @@ export class FiveToolsClient {
 
     if (!this._lastState) return nameFromFile || undefined;
 
-    const imageless = monsters.filter(c => !this._imageOverrides[c.name]);
+    // Monsters whose default token is known to load already have a picture; pending/broken ones may not.
+    const imageless = monsters.filter(c => !this._imageOverrides[c.name] && this._defaultImageStatus[c.name] !== "ok");
 
     const active = imageless.find(c => c.isActive);
     if (active) return active.name;
@@ -134,9 +138,24 @@ export class FiveToolsClient {
   }
 
   private _getImageAddress(name: string, type: CombatantType) {
-    if (type === "monster") return this._imageOverrides[name] ?? `${FIVE_TOOLS_IMG_BASE_URL}/bestiary/tokens/XMM/${name}.webp`
+    if (type === "monster") {
+      if (this._imageOverrides[name]) return this._imageOverrides[name];
+      const defaultUrl = `${FIVE_TOOLS_IMG_BASE_URL}/bestiary/tokens/XMM/${name}.webp`;
+      this._probeDefaultImage(name, defaultUrl);
+      return defaultUrl;
+    }
 
     if (type === "player") return this._playersData[name]
+  }
+
+  private _probeDefaultImage(name: string, url: string) {
+    if (this._defaultImageStatus[name] || typeof Image === "undefined") return;
+
+    this._defaultImageStatus[name] = "pending";
+    const img = new Image();
+    img.onload = () => { this._defaultImageStatus[name] = "ok"; };
+    img.onerror = () => { this._defaultImageStatus[name] = "broken"; };
+    img.src = url;
   }
 
   onStateUpdate(listener: Listener) {

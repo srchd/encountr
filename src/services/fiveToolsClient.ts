@@ -65,7 +65,9 @@ export class FiveToolsClient {
 
     // e.g. "bestiary/AI/Splugoth the Returned.webp" -> "Splugoth the Returned".
     // External URLs (e.g. D&D Beyond) have opaque filenames that won't match any monster.
-    const fileName = decodeURIComponent(url.split("/").pop() ?? "");
+    const rawName = url.split("?")[0].split("/").pop() ?? "";
+    let fileName = rawName;
+    try { fileName = decodeURIComponent(rawName); } catch { /* keep raw name */ }
     const nameFromFile = fileName.replace(/\.[^.]+$/, "");
 
     const targetName = this._resolveImageTarget(nameFromFile);

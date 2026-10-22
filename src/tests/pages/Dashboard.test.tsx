@@ -31,6 +31,17 @@ vi.mock('../../hooks/usePlayers', () => ({
   }),
 }));
 
+// Keeps real token state for the controlled input, but never touches Firestore
+vi.mock('../../hooks/useToken', async () => {
+  const { useState } = await import('react');
+  return {
+    useToken: () => {
+      const [token, setToken] = useState('');
+      return { token, setToken, saveToken: vi.fn() };
+    },
+  };
+});
+
 beforeEach(() => {
   vi.clearAllMocks();
   mockPlayers = [];
